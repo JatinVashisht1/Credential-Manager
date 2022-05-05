@@ -13,6 +13,10 @@ class AddCredentialViewModel @Inject constructor(
     val credentialDatabase: CredentialDatabase
 ) : ViewModel() {
     init {
+//        addCredentialToDatabase()
+    }
+
+    fun onInsertCredentialButtonClicked(){
         viewModelScope.launch {
             credentialDatabase.dao.insertCredential(
                 CredentialEntity(
