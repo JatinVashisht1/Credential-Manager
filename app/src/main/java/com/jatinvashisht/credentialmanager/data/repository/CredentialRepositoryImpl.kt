@@ -5,6 +5,7 @@ import com.jatinvashisht.credentialmanager.core.Resource
 import com.jatinvashisht.credentialmanager.data.local.CredentialDatabase
 import com.jatinvashisht.credentialmanager.data.local.CredentialEntity
 import com.jatinvashisht.credentialmanager.domain.repository.CredentialRepository
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
@@ -17,7 +18,9 @@ import javax.inject.Inject
 class CredentialRepositoryImpl @Inject constructor(
     private val credentialDatabase: CredentialDatabase
 ) : CredentialRepository {
+    val job: Job? = null
     override suspend fun insertCredential(credentialEntity: CredentialEntity) {
+
         val credentialEntityToSave = encryptCredential(credentialEntity = credentialEntity)
         Log.d("repository", "credentialEntityToSave is $credentialEntityToSave")
         credentialDatabase.dao.insertCredential(credentialEntity = credentialEntityToSave)
@@ -64,7 +67,7 @@ class CredentialRepositoryImpl @Inject constructor(
         Log.d("repository", "value of cipherText is $cipherText and value of iv if $iv")
         val credentialEntityToSave = CredentialEntity(
             credentialTitle = credentialEntity.credentialTitle,
-            credentialInfo = iv.contentToString()
+            credentialInfo = String(iv)
         )
         Log.d("mytag", "credentialEntityToSave is $credentialEntityToSave")
         return credentialEntityToSave
