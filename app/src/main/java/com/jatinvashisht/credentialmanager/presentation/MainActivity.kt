@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
-import com.jatinvashisht.credentialmanager.presentation.add_credential_screen.AddCredentialScreen
+import com.jatinvashisht.credentialmanager.presentation.credential_screen.CredentialScreen
 import com.jatinvashisht.credentialmanager.presentation.ui.theme.CredentialManagerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    AddCredentialScreen()
+                    CredentialScreen()
                 }
             }
         }

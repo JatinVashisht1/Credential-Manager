@@ -7,6 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface CredentialRepository {
     suspend fun insertCredential(credentialEntity: CredentialEntity)
     suspend fun deleteCredential(credentialEntity: CredentialEntity)
-    fun getAllCredentialsOrderByCredentialTitle(): Flow<Resource<List<CredentialEntity>>>
-    fun getAllCredentialsOrderByLastAdded(): Flow<Resource<List<CredentialEntity>>>
+    suspend fun getAllCredentialsOrderByCredentialTitle(): Flow<List<CredentialEntity>>
+    fun getAllCredentialsOrderByLastAdded(): Flow<List<CredentialEntity>>
 }

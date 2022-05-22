@@ -5,17 +5,21 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
-private val DarkColorPalette = darkColors(
+private val ColorPalette = darkColors(
     primary = Purple200,
     primaryVariant = Purple700,
-    secondary = Teal200
+    secondary = Teal200,
+    surface = Color(0xff0d3b66),
+    background = Color(0xFF041422),
+    onSurface = Color(0xfff4d35e)
 )
 
-private val LightColorPalette = lightColors(
+private val LColorPalette = lightColors(
     primary = Purple500,
     primaryVariant = Purple700,
-    secondary = Teal200
+    secondary = Teal200,
 
     /* Other default colors to override
     background = Color.White,
@@ -32,11 +36,7 @@ fun CredentialManagerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) {
-        DarkColorPalette
-    } else {
-        LightColorPalette
-    }
+    val colors = ColorPalette
 
     MaterialTheme(
         colors = colors,
