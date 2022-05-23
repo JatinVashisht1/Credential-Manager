@@ -22,6 +22,7 @@ import com.jatinvashisht.credentialmanager.core.Screen
 import com.jatinvashisht.credentialmanager.presentation.credential_screen.components.CredentialListItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 
 @Composable
 fun CredentialScreen(
@@ -31,7 +32,9 @@ fun CredentialScreen(
     val credentialScreenState = credentialViewModel.credentialScreen.value
     val scaffoldState = rememberScaffoldState()
     LaunchedEffect(key1 = Unit) {
-        credentialViewModel.uiEvents.consumeAsFlow().collectLatest { event ->
+        credentialViewModel.uiEvents
+            .receiveAsFlow()
+            .collect { event ->
             when (event) {
                 is UiEvents.ShowSnackbar -> scaffoldState.snackbarHostState.showSnackbar(message = event.message)
                 is UiEvents.Navigate -> navController.navigate(event.route) {
@@ -57,7 +60,7 @@ fun CredentialScreen(
                 scaffoldState = scaffoldState,
                 floatingActionButton = {
                     FloatingActionButton(
-                        onClick = { navController.navigate(Screen.AddCredentialScreen.route){launchSingleTop = true} },
+                        onClick = { credentialViewModel.fireUiEvents(event = UiEvents.Navigate(route = Screen.AddCredentialScreen.route)) },
                         modifier = Modifier.padding(bottom = 32.dp, end = 5.dp)
                     ) {
                         Icon(imageVector = Icons.Default.Add, contentDescription = "Add new credential")
@@ -65,7 +68,6 @@ fun CredentialScreen(
                 }
             ) {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-
                     items(items = credentialScreenState.data) { item ->
                         Log.d("homescreen", "data is $item")
                         CredentialListItem(
