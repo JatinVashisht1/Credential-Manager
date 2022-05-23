@@ -9,4 +9,5 @@ interface CredentialRepository {
     suspend fun deleteCredential(credentialEntity: CredentialEntity)
     suspend fun getAllCredentialsOrderByCredentialTitle(): Flow<List<CredentialEntity>>
     fun getAllCredentialsOrderByLastAdded(): Flow<List<CredentialEntity>>
+    suspend fun getCredentialByPrimaryKey(id: Int): CredentialEntity?
 }

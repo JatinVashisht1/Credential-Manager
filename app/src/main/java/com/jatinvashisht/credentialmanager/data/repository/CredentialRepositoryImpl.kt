@@ -42,6 +42,10 @@ class CredentialRepositoryImpl @Inject constructor(
         return credentialDatabase.dao.getAllCredentialsOrderByLastAdded()
     }
 
+    override suspend fun getCredentialByPrimaryKey(id: Int): CredentialEntity? {
+        return credentialDatabase.dao.getCredentialByPrimaryKey(id = id)
+    }
+
     // utility function to encrypt credentials
     private fun encryptCredential(credentialEntity: CredentialEntity): CredentialEntity {
         val cipher = Cipher.getInstance("AES/CBC/PKCS7PADDING")
@@ -56,8 +60,6 @@ class CredentialRepositoryImpl @Inject constructor(
         credentialInfo = Base64.encodeToString(encryptedCredentialInfo,Base64.NO_WRAP or Base64.DEFAULT) )
         return encryptedCredentialEntity
     }
-
-
 
     private fun createMessageDigest(credentialEntity: CredentialEntity): CredentialEntity {
         val credentialTitleMessage = credentialEntity.credentialTitle
@@ -75,25 +77,4 @@ class CredentialRepositoryImpl @Inject constructor(
         return digestedCredentialEntity
     }
 
-/*
-private fun generateDigitalSignature(credentialEntity: CredentialEntity): ByteArray? {
-val credentialInfoMessage = credentialEntity.credentialInfo
-val credentialTitleMessage = credentialEntity.credentialTitle
-
-//        val keyPairGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
-//        val parameterSpec = KeyGenParameterSpec.Builder(
-//            KeyProperties.PURPOSE_SIGN or KeyProperties.PURPOSE_VERIFY
-//        )
-
-
-val signature = Signature.getInstance("SHA256withECDSA")
-.apply {
-initSign(key)
-update(credentialInfoMessage.toByteArray())
-update(credentialTitleMessage.toByteArray())
-}
-val signedSignature = signature.sign()
-return signedSignature
-}
-*/
 }

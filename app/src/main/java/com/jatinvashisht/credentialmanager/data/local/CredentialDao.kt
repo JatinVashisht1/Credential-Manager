@@ -21,4 +21,7 @@ interface CredentialDao{
 
     @Query("SELECT * FROM credentialentity")
     fun getAllCredentialsOrderByLastAdded(): Flow<List<CredentialEntity>>
+
+    @Query("SELECT * FROM credentialentity WHERE primaryKey=:id")
+    suspend fun getCredentialByPrimaryKey(id: Int): CredentialEntity?
 }

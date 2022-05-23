@@ -8,9 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val ColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200,
+    primary = Color(0xFF4FC3F7),
+    primaryVariant = Color(0xFFFF5722),
+    // this is color of FAB
+    secondary = Color(0xFFAED581),
+    // this is color of cards
     surface = Color(0xff0d3b66),
     background = Color(0xFF041422),
     onSurface = Color(0xfff4d35e)

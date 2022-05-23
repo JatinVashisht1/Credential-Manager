@@ -45,6 +45,9 @@ class CredentialViewModel @Inject constructor(
                 is UiEvents.ShowSnackbar -> {
                     uiEvents.send(event)
                 }
+                is UiEvents.Navigate -> {
+                    uiEvents.send(event)
+                }
             }
         }
     }
@@ -98,4 +101,5 @@ class CredentialViewModel @Inject constructor(
 
 sealed class UiEvents {
     class ShowSnackbar(val message: String) : UiEvents()
+    class Navigate(val route: String): UiEvents()
 }

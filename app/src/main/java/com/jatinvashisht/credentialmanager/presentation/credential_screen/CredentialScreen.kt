@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -15,18 +17,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.jatinvashisht.credentialmanager.core.Screen
 import com.jatinvashisht.credentialmanager.presentation.credential_screen.components.CredentialListItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.consumeAsFlow
 
 @Composable
-fun CredentialScreen(credentialViewModel: CredentialViewModel = hiltViewModel()) {
+fun CredentialScreen(
+    credentialViewModel: CredentialViewModel = hiltViewModel(),
+    navController: NavHostController
+) {
     val credentialScreenState = credentialViewModel.credentialScreen.value
     val scaffoldState = rememberScaffoldState()
     LaunchedEffect(key1 = Unit) {
         credentialViewModel.uiEvents.consumeAsFlow().collectLatest { event ->
             when (event) {
                 is UiEvents.ShowSnackbar -> scaffoldState.snackbarHostState.showSnackbar(message = event.message)
+                is UiEvents.Navigate -> navController.navigate(event.route) {
+                    this.launchSingleTop = true
+                }
             }
         }
     }
@@ -41,19 +51,18 @@ fun CredentialScreen(credentialViewModel: CredentialViewModel = hiltViewModel())
         }
     } else {
         Scaffold(
-            scaffoldState = scaffoldState
+            scaffoldState = scaffoldState,
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { credentialViewModel.fireUiEvents(UiEvents.Navigate(Screen.AddCredentialScreen.route)) },
+                    modifier = Modifier.padding(all = 32.dp)
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "Add new credential")
+                }
+            }
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                item(1) {
-                    Button(
-                        onClick = credentialViewModel::onInsertCredentialButtonClicked,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp)
-                    ) {
-                        Text(text = "Add Credential")
-                    }
-                }
+
                 items(items = credentialScreenState.data) { item ->
                     Log.d("homescreen", "data is $item")
                     CredentialListItem(
