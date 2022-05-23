@@ -41,36 +41,40 @@ fun CredentialScreen(
         }
     }
 
-    if (credentialScreenState.isLoading) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-    } else if (credentialScreenState.error.isNotBlank()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(text = credentialScreenState.error, color = Color.Red)
-        }
-    } else {
-        Scaffold(
-            scaffoldState = scaffoldState,
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { credentialViewModel.fireUiEvents(UiEvents.Navigate(Screen.AddCredentialScreen.route)) },
-                    modifier = Modifier.padding(all = 32.dp)
-                ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = "Add new credential")
-                }
+    when {
+        credentialScreenState.isLoading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
             }
-        ) {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-
-                items(items = credentialScreenState.data) { item ->
-                    Log.d("homescreen", "data is $item")
-                    CredentialListItem(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp), credentialEntity = item
+        }
+        credentialScreenState.error.isNotBlank() -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = credentialScreenState.error, color = Color.Red)
+            }
+        }
+        else -> {
+            Scaffold(
+                scaffoldState = scaffoldState,
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = { navController.navigate(Screen.AddCredentialScreen.route){launchSingleTop = true} },
+                        modifier = Modifier.padding(bottom = 32.dp, end = 5.dp)
                     ) {
-                        credentialViewModel.onDeleteIconButtonClicked(credentialEntity = item)
+                        Icon(imageVector = Icons.Default.Add, contentDescription = "Add new credential")
+                    }
+                }
+            ) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+
+                    items(items = credentialScreenState.data) { item ->
+                        Log.d("homescreen", "data is $item")
+                        CredentialListItem(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp), credentialEntity = item
+                        ) {
+                            credentialViewModel.onDeleteIconButtonClicked(credentialEntity = item)
+                        }
                     }
                 }
             }

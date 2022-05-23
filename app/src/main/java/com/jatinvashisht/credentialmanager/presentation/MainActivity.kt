@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
                         arguments = listOf(
                             navArgument("id"){
                                 type = NavType.IntType
-                                this.defaultValue = -1
+                                defaultValue = -1
                             }
                         )){
                             AddCredentialScreen(navController = navController)
