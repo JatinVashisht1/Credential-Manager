@@ -19,7 +19,7 @@ class CredentialRepositoryImpl @Inject constructor(
 ) : CredentialRepository {
     override suspend fun insertCredential(credentialEntity: CredentialEntity, privateKey: String) {
         val cipher = cryptographyManager.getInitializedCipherForEncryption()
-        val encryptedCredentialEntity = cryptographyManager.encryptData(credentialEntity = credentialEntity, cipher = cipher)
+        val encryptedCredentialEntity = cryptographyManager.encryptData(credentialEntity = credentialEntity)
         credentialDatabase.dao.insertCredential(credentialEntity = encryptedCredentialEntity)
     }
 
@@ -30,7 +30,6 @@ class CredentialRepositoryImpl @Inject constructor(
     override suspend fun getAllCredentialsOrderByCredentialTitle(): Flow<List<CredentialEntity>> {
         return credentialDatabase.dao.getAllCredentialsOrderByCredentialTitle()
     }
-
 
     override fun getAllCredentialsOrderByLastAdded(): Flow<List<CredentialEntity>> {
         return credentialDatabase.dao.getAllCredentialsOrderByLastAdded()

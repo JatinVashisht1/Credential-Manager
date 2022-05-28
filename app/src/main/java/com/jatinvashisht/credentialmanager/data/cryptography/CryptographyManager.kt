@@ -13,7 +13,7 @@ interface CryptographyManager {
     /**
      * The Cipher created with [getInitializedCipherForEncryption] is used here
      */
-    fun encryptData(credentialEntity: CredentialEntity, cipher: Cipher): CredentialEntity
+    fun encryptData(credentialEntity: CredentialEntity): CredentialEntity
 
     /**
      * The Cipher created with [getInitializedCipherForDecryption] is used here

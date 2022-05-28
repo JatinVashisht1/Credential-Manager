@@ -18,7 +18,7 @@ class CryptographyManagerImpl @Inject constructor() : CryptographyManager {
     private val KEY_SIZE = 256
     private val ANDROID_KEYSTORE = "AndroidKeyStore"
     private val ENCRYPTION_BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM
-    private val ENCRYPTION_PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7
+    private val ENCRYPTION_PADDING = KeyProperties.ENCRYPTION_PADDING_NONE
     private val ENCRYPTION_ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
     private val PRIVATEKEY = "biometric_sample_encryption_key"
 
@@ -38,7 +38,8 @@ class CryptographyManagerImpl @Inject constructor() : CryptographyManager {
         return cipher
     }
 
-    override fun encryptData(credentialEntity: CredentialEntity, cipher: Cipher): CredentialEntity {
+    override fun encryptData(credentialEntity: CredentialEntity): CredentialEntity {
+        val cipher = Cipher.getInstance("AES/CBC/PKCS7PADDING")
         val staticKey = Constants.AES_KEY.toByteArray()
         val keySpec = SecretKeySpec(staticKey, "AES")
         val ivSpec = IvParameterSpec(Constants.IV_VECTOR)
