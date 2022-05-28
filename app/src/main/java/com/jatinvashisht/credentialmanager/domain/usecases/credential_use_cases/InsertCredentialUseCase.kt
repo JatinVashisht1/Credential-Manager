@@ -7,6 +7,6 @@ import javax.inject.Inject
 
 class InsertCredentialUseCase @Inject constructor(private val credentialRepository: CredentialRepository){
     suspend operator fun invoke(credentialEntity: CredentialEntity){
-        credentialRepository.insertCredential(credentialEntity = credentialEntity)
+//        credentialRepository.insertCredential(credentialEntity = credentialEntity)
     }
 }

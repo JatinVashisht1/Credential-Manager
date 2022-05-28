@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AddCredentialViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+     savedStateHandle: SavedStateHandle,
     private val repository: CredentialRepository
 ) : ViewModel() {
     private val componentCredentialTitleMutableState = mutableStateOf<CustomTextFieldState>(
@@ -34,6 +34,14 @@ class AddCredentialViewModel @Inject constructor(
         )
     )
     val componentCredentialInfoState = componentCredentialInfoMutableState
+
+    private val componentCredentialKeyMutableState = mutableStateOf<CustomTextFieldState>(
+        value = CustomTextFieldState(
+            label = "Private Key",
+            placeholder = "Private Key cannot be empty"
+        )
+    )
+    val componentCredentialKey = componentCredentialKeyMutableState
 
     val uiEvents = Channel<UiEvents>()
 
@@ -59,13 +67,14 @@ class AddCredentialViewModel @Inject constructor(
         viewModelScope.launch {
             if (componentCredentialInfoMutableState.value.value.trim()
                     .isNotBlank() && componentCredentialTitleMutableState.value.value.trim()
-                    .isNotBlank()
+                    .isNotBlank() && componentCredentialKeyMutableState.value.value.trim().isNotBlank()
             ) {
                 repository.insertCredential(
                     CredentialEntity(
                         credentialTitle = componentCredentialTitleMutableState.value.value,
-                        credentialInfo = componentCredentialInfoMutableState.value.value
-                    )
+                        credentialInfo = componentCredentialInfoMutableState.value.value,
+                    ),
+                    privateKey = componentCredentialKeyMutableState.value.value.trim()
                 )
                 fireUiEvent(event = UiEvents.Navigate(Screen.CredentialScreen.route))
             } else {
@@ -107,6 +116,15 @@ class AddCredentialViewModel @Inject constructor(
             value = newValue,
             label = "Credential Info",
             placeholder = "Credential info can't be empty",
+            isError = newValue.isBlank()
+        )
+    }
+
+    fun onComponentCredentialKeyChanged(newValue: String){
+        componentCredentialKey.value = CustomTextFieldState(
+            value = newValue,
+            label = "Private Key",
+            placeholder = "Private Key cannot be empty",
             isError = newValue.isBlank()
         )
     }

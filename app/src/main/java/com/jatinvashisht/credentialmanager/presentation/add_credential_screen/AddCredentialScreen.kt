@@ -29,12 +29,13 @@ fun AddCredentialScreen(
 ) {
     val componentTitle = addCredentialViewModel.componentCredentialTitleState.value
     val componentInfo = addCredentialViewModel.componentCredentialInfoState.value
+    val componentKey = addCredentialViewModel.componentCredentialKey.value
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = Unit){
         addCredentialViewModel.uiEvents.receiveAsFlow().collectLatest { uiEvent->
             when(uiEvent){
-                is UiEvents.Navigate -> navController.navigate(uiEvent.route)
+                is UiEvents.Navigate -> navController.navigateUp()
                 is UiEvents.ShowSnackbar -> scaffoldState.snackbarHostState.showSnackbar(uiEvent.message)
             }
         }
@@ -55,6 +56,14 @@ fun AddCredentialScreen(
                 ComponentCustomTextField(
                     customTextFieldState = componentInfo,
                     onCustomTextFieldValueChange = addCredentialViewModel::onComponentCredentialInfoValueChanged,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp)
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                ComponentCustomTextField(
+                    customTextFieldState = componentKey,
+                    onCustomTextFieldValueChange = addCredentialViewModel::onComponentCredentialKeyChanged,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 4.dp)

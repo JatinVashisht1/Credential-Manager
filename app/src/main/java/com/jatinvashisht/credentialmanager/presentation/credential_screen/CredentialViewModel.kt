@@ -52,16 +52,16 @@ class CredentialViewModel @Inject constructor(
         }
     }
 
-    fun onInsertCredentialButtonClicked() {
-        viewModelScope.launch {
-            credentialRepository.insertCredential(
-                credentialEntity = CredentialEntity(
-                    credentialTitle = "#Title",
-                    credentialInfo = "#Info"
-                )
-            )
-        }
-    }
+//    fun onInsertCredentialButtonClicked() {
+//        viewModelScope.launch {
+//            credentialRepository.insertCredential(
+//                credentialEntity = CredentialEntity(
+//                    credentialTitle = "#Title",
+//                    credentialInfo = "#Info"
+//                )
+//            )
+//        }
+//    }
 
     fun onDeleteIconButtonClicked(credentialEntity: CredentialEntity) {
         viewModelScope.launch {
@@ -72,34 +72,28 @@ class CredentialViewModel @Inject constructor(
 
     private suspend fun getAllCredentials() {
         viewModelScope.launch {
-            credentialRepository.getAllCredentialsOrderByLastAdded().collectLatest {encryptedCredentials->
-                val decryptedCredentials = encryptedCredentials.map {
-                    decryptCredential(it)
-                }
+            credentialRepository.getAllCredentialsOrderByLastAdded()
+                .collectLatest { encryptedCredentials ->
+                    val decryptedCredentials = encryptedCredentials.map {
+                        decryptCredential(it)
+                    }
                     credentialScreenState.value =
-                        CredentialScreenState(error = "", isLoading = false, data = decryptedCredentials)
+                        CredentialScreenState(
+                            error = "",
+                            isLoading = false,
+                            data = decryptedCredentials
+                        )
                 }
-            }
         }
     }
 
     private fun decryptCredential(encryptedCredentialEntity: CredentialEntity): CredentialEntity {
-        val encryptedCredentialTitle = encryptedCredentialEntity.credentialTitle
-        val encryptedCredentialInfo = encryptedCredentialEntity.credentialInfo
-        val cipher = Cipher.getInstance("AES/CBC/PKCS7PADDING")
-        val staticKey = Constants.AES_KEY.toByteArray()
-        val ivSpec = IvParameterSpec(Constants.IV_VECTOR)
-        val keySpec = SecretKeySpec(staticKey, "AES")
-        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec)
-        val decryptedCredentialTitle = cipher.doFinal(Base64.decode(encryptedCredentialTitle, Base64.DEFAULT))
-        val decryptedCredentialInfo = cipher.doFinal(Base64.decode(encryptedCredentialInfo, Base64.DEFAULT))
-        val decryptedCredentialEntity =  CredentialEntity(credentialTitle = String(decryptedCredentialTitle),
-        credentialInfo = String(decryptedCredentialInfo), primaryKey = encryptedCredentialEntity.primaryKey)
-        return decryptedCredentialEntity
+        val decryptedCredential = credentialRepository.getDecryptedCredential(credentialEntity = encryptedCredentialEntity)
+        return decryptedCredential
     }
-
+}
 
 sealed class UiEvents {
     class ShowSnackbar(val message: String) : UiEvents()
-    class Navigate(val route: String): UiEvents()
+    class Navigate(val route: String) : UiEvents()
 }

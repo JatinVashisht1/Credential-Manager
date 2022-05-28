@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.jatinvashisht.credentialmanager.core.Constants
+import com.jatinvashisht.credentialmanager.data.cryptography.CryptographyManager
+import com.jatinvashisht.credentialmanager.data.cryptography.CryptographyManagerImpl
 import com.jatinvashisht.credentialmanager.data.local.CredentialDatabase
 import com.jatinvashisht.credentialmanager.data.repository.CredentialRepositoryImpl
 import com.jatinvashisht.credentialmanager.domain.repository.CredentialRepository
@@ -29,15 +31,27 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideCredentialRepository(credentialDatabase: CredentialDatabase): CredentialRepository =
-        CredentialRepositoryImpl(credentialDatabase = credentialDatabase)
+    fun provideCredentialRepository(
+        credentialDatabase: CredentialDatabase,
+        cryptographyManager: CryptographyManager
+    ): CredentialRepository =
+        CredentialRepositoryImpl(
+            credentialDatabase = credentialDatabase,
+            cryptographyManager = cryptographyManager
+        )
 
     @Provides
     @Singleton
     fun provideGodUseCase(credentialRepository: CredentialRepository): GodUseCase = GodUseCase(
-        insertCredentialUseCase = InsertCredentialUseCase(credentialRepository = credentialRepository ),
+        insertCredentialUseCase = InsertCredentialUseCase(credentialRepository = credentialRepository),
         deleteCredentialUseCase = DeleteCredentialUseCase(credentialRepository = credentialRepository),
-        getAllCredentialsByLastAddedUseCase = GetAllCredentialsByLastAddedUseCase(credentialRepository = credentialRepository),
+        getAllCredentialsByLastAddedUseCase = GetAllCredentialsByLastAddedUseCase(
+            credentialRepository = credentialRepository
+        ),
         getAllCredentialsByNameUseCase = GetAllCredentialsByNameUseCase(credentialRepository = credentialRepository)
     )
+
+    @Provides
+    @Singleton
+    fun provideCryptographyManager(): CryptographyManager = CryptographyManagerImpl()
 }

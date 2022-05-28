@@ -38,7 +38,7 @@ fun CredentialScreen(
             when (event) {
                 is UiEvents.ShowSnackbar -> scaffoldState.snackbarHostState.showSnackbar(message = event.message)
                 is UiEvents.Navigate -> navController.navigate(event.route) {
-                    this.launchSingleTop = true
+                    launchSingleTop = true
                 }
             }
         }
