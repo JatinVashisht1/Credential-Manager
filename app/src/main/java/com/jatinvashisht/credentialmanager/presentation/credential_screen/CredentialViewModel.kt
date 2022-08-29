@@ -1,6 +1,7 @@
 package com.jatinvashisht.credentialmanager.presentation.credential_screen
 
 import android.util.Base64
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import com.jatinvashisht.credentialmanager.data.local.CredentialEntity
 import com.jatinvashisht.credentialmanager.domain.repository.CredentialRepository
 import com.jatinvashisht.credentialmanager.presentation.credential_screen.components.CredentialScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -33,6 +35,9 @@ class CredentialViewModel @Inject constructor(
         mutableStateOf<CredentialScreenState>(CredentialScreenState())
     val credentialScreen = credentialScreenState
 
+    private var lastDeletedCredential: Stack<CredentialEntity> = Stack<CredentialEntity>()
+
+
     init {
         viewModelScope.launch {
             getAllCredentials()
@@ -48,23 +53,24 @@ class CredentialViewModel @Inject constructor(
                 is UiEvents.Navigate -> {
                     uiEvents.send(event)
                 }
+
             }
         }
     }
 
-//    fun onInsertCredentialButtonClicked() {
-//        viewModelScope.launch {
-//            credentialRepository.insertCredential(
-//                credentialEntity = CredentialEntity(
-//                    credentialTitle = "#Title",
-//                    credentialInfo = "#Info"
-//                )
-//            )
-//        }
-//    }
+    fun onSnackbarUndoButtonClicked() {
+        Log.d("viewmodeltag", "undo button clicked, credential is $lastDeletedCredential")
+
+        viewModelScope.launch {
+            lastDeletedCredential.let {
+                credentialRepository.insertCredential(credentialEntity = it.pop())
+            }
+        }
+    }
 
     fun onDeleteIconButtonClicked(credentialEntity: CredentialEntity) {
         viewModelScope.launch {
+            lastDeletedCredential.add(credentialEntity)
             credentialRepository.deleteCredential(credentialEntity = credentialEntity)
             fireUiEvents(event = UiEvents.ShowSnackbar(message = "credential was deleted successfully"))
         }
@@ -88,7 +94,8 @@ class CredentialViewModel @Inject constructor(
     }
 
     private fun decryptCredential(encryptedCredentialEntity: CredentialEntity): CredentialEntity {
-        val decryptedCredential = credentialRepository.getDecryptedCredential(credentialEntity = encryptedCredentialEntity)
+        val decryptedCredential =
+            credentialRepository.getDecryptedCredential(credentialEntity = encryptedCredentialEntity)
         return decryptedCredential
     }
 }
@@ -97,3 +104,4 @@ sealed class UiEvents {
     class ShowSnackbar(val message: String) : UiEvents()
     class Navigate(val route: String) : UiEvents()
 }
+

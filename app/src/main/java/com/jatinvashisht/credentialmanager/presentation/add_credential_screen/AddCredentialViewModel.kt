@@ -35,23 +35,15 @@ class AddCredentialViewModel @Inject constructor(
     )
     val componentCredentialInfoState = componentCredentialInfoMutableState
 
-    private val componentCredentialKeyMutableState = mutableStateOf<CustomTextFieldState>(
-        value = CustomTextFieldState(
-            label = "Private Key",
-            placeholder = "Private Key cannot be empty"
-        )
-    )
-    val componentCredentialKey = componentCredentialKeyMutableState
-
     val uiEvents = Channel<UiEvents>()
 
+    var id = -1
+
     init {
-        val id = savedStateHandle.get<Int>(Constants.CREDENTIAL_PRIVATE_KEY)
+        id = savedStateHandle.get<Int>("id")?: -1
         if (id != -1) {
             viewModelScope.launch {
-                id?.let {
-                    getCredentialById(id = it)
-                }
+                getCredentialById(id = id)
             }
         }
     }
@@ -67,14 +59,14 @@ class AddCredentialViewModel @Inject constructor(
         viewModelScope.launch {
             if (componentCredentialInfoMutableState.value.value.trim()
                     .isNotBlank() && componentCredentialTitleMutableState.value.value.trim()
-                    .isNotBlank() && componentCredentialKeyMutableState.value.value.trim().isNotBlank()
+                    .isNotBlank()
             ) {
                 repository.insertCredential(
                     CredentialEntity(
                         credentialTitle = componentCredentialTitleMutableState.value.value,
                         credentialInfo = componentCredentialInfoMutableState.value.value,
+                        primaryKey = if(id != -1) id else null
                     ),
-                    privateKey = componentCredentialKeyMutableState.value.value.trim()
                 )
                 fireUiEvent(event = UiEvents.Navigate(Screen.CredentialScreen.route))
             } else {
@@ -120,14 +112,7 @@ class AddCredentialViewModel @Inject constructor(
         )
     }
 
-    fun onComponentCredentialKeyChanged(newValue: String){
-        componentCredentialKey.value = CustomTextFieldState(
-            value = newValue,
-            label = "Private Key",
-            placeholder = "Private Key cannot be empty",
-            isError = newValue.isBlank()
-        )
-    }
+
 }
 
 sealed class UiEvents {

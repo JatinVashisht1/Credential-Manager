@@ -5,12 +5,13 @@ import android.security.keystore.KeyProperties
 import android.util.Base64
 import com.jatinvashisht.credentialmanager.core.Constants
 import com.jatinvashisht.credentialmanager.data.local.CredentialEntity
-import java.nio.charset.Charset
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
-import javax.crypto.spec.*
+import javax.crypto.spec.GCMParameterSpec
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
 
 class CryptographyManagerImpl @Inject constructor() : CryptographyManager {
@@ -44,7 +45,6 @@ class CryptographyManagerImpl @Inject constructor() : CryptographyManager {
         val keySpec = SecretKeySpec(staticKey, "AES")
         val ivSpec = IvParameterSpec(Constants.IV_VECTOR)
         cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec)
-
         val encryptedCredentialTitle =
             cipher.doFinal(credentialEntity.credentialTitle.toByteArray())
         val encryptedCredentialInfo = cipher.doFinal(credentialEntity.credentialInfo.toByteArray())
@@ -56,7 +56,8 @@ class CryptographyManagerImpl @Inject constructor() : CryptographyManager {
             credentialInfo = Base64.encodeToString(
                 encryptedCredentialInfo,
                 Base64.NO_WRAP or Base64.DEFAULT
-            )
+            ),
+            primaryKey = credentialEntity.primaryKey
         )
         return encryptedCredentialEntity
     }

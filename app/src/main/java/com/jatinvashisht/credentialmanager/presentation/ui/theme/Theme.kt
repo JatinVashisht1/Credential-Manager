@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 
 private val ColorPalette = darkColors(
     primary = Color(0xFF4FC3F7),
-    primaryVariant = Color(0xFFFF5722),
+    primaryVariant = Color(0xFF4527A0),
     // this is color of FAB
     secondary = Color(0xFFAED581),
     // this is color of cards

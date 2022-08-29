@@ -17,7 +17,7 @@ class CredentialRepositoryImpl @Inject constructor(
     private val credentialDatabase: CredentialDatabase,
     private val cryptographyManager: CryptographyManager
 ) : CredentialRepository {
-    override suspend fun insertCredential(credentialEntity: CredentialEntity, privateKey: String) {
+    override suspend fun insertCredential(credentialEntity: CredentialEntity) {
         val cipher = cryptographyManager.getInitializedCipherForEncryption()
         val encryptedCredentialEntity = cryptographyManager.encryptData(credentialEntity = credentialEntity)
         credentialDatabase.dao.insertCredential(credentialEntity = encryptedCredentialEntity)
@@ -36,7 +36,10 @@ class CredentialRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCredentialByPrimaryKey(id: Int): CredentialEntity? {
-        return credentialDatabase.dao.getCredentialByPrimaryKey(id = id)
+        val encryptedCredentialEntity = credentialDatabase.dao.getCredentialByPrimaryKey(id = id)?: return null
+        val cipher = Cipher.getInstance("AES/CBC/PKCS7PADDING")
+        val decryptedCredentialEntity = cryptographyManager.decryptData(credentialEntity = encryptedCredentialEntity, cipher = cipher)
+        return decryptedCredentialEntity
     }
 
     override fun getDecryptedCredential(credentialEntity: CredentialEntity): CredentialEntity {

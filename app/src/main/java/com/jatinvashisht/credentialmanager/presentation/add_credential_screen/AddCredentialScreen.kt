@@ -7,16 +7,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Button
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.jatinvashisht.credentialmanager.data.local.CredentialEntity
 import com.jatinvashisht.credentialmanager.presentation.add_credential_screen.components.ComponentCustomTextField
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -29,8 +29,9 @@ fun AddCredentialScreen(
 ) {
     val componentTitle = addCredentialViewModel.componentCredentialTitleState.value
     val componentInfo = addCredentialViewModel.componentCredentialInfoState.value
-    val componentKey = addCredentialViewModel.componentCredentialKey.value
     val scaffoldState = rememberScaffoldState()
+
+
 
     LaunchedEffect(key1 = Unit){
         addCredentialViewModel.uiEvents.receiveAsFlow().collectLatest { uiEvent->
@@ -41,7 +42,22 @@ fun AddCredentialScreen(
         }
     }
 
-    Scaffold(scaffoldState = scaffoldState) {
+    Scaffold(
+        scaffoldState = scaffoldState,
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = "Add/Edit Credential")
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "goto home screen")
+                    }
+                },
+//                backgroundColor = MaterialTheme.colors.background
+            )
+        }
+    ) {
         LazyColumn(state = lazyListState) {
             item(1) {
                 Spacer(modifier = Modifier.height(4.dp))
@@ -61,14 +77,14 @@ fun AddCredentialScreen(
                         .padding(horizontal = 4.dp)
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                ComponentCustomTextField(
-                    customTextFieldState = componentKey,
-                    onCustomTextFieldValueChange = addCredentialViewModel::onComponentCredentialKeyChanged,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 4.dp)
-                )
-                Spacer(modifier = Modifier.height(4.dp))
+//                ComponentCustomTextField(
+//                    customTextFieldState = componentKey,
+//                    onCustomTextFieldValueChange = addCredentialViewModel::onComponentCredentialKeyChanged,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(horizontal = 4.dp)
+//                )
+//                Spacer(modifier = Modifier.height(4.dp))
                 Button(
                     onClick = addCredentialViewModel::onSaveCredentialButtonClicked,
                     modifier = Modifier

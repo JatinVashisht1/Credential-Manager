@@ -11,9 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CredentialManager">
         <activity
+            android:excludeFromRecents="true"
             android:name=".presentation.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.CredentialManager">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
